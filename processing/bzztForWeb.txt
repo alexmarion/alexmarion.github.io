@@ -91,7 +91,7 @@ class Bzzt {
     r = 1;
     x = 0;
     y = 0;
-    
+
     xLoc = width/2;
     yLoc = height/2;
 
@@ -107,6 +107,8 @@ class Bzzt {
       maxBzztSize -= maxEllipseSize/2;
     }
 
+    //startColor = color(75, 255, 254);
+    //endColor = color(0, 179, 254);
     this.startColor = startColor;
     this.endColor = endColor;
     colorSteps = int(maxBzztSize/random(1, 1.5));
@@ -158,12 +160,10 @@ class Bzzt {
     angle += rotRate;
 
     /* Travel direction */
-    pushMatrix();
-    if (dist >= (height - yLoc) - size || dist <= -(height - yLoc) + size) {
+    if (dist >= height/2 - size || dist >= width/2 - size) {
       out = false;
     }
-    popMatrix();
-     
+
     /* Stopping condition */
     if (dist <= 0 && out == false) {
       stopped = true;
@@ -184,10 +184,10 @@ class Bzzt {
     for (int i = 1; i < 361; i += 30) { 
       // Conversion from polar to cartisian coordinates
       theta = radians(i);
-      
+
       x = getPoint(xFunc);
       y = getPoint(yFunc);
-      
+
       ellipse(x, y, size, size);
     }
   }
@@ -205,4 +205,5 @@ class Bzzt {
     }
   }
 }
+
 
