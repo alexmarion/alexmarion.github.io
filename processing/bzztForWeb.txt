@@ -50,9 +50,11 @@ void createBzzt(color start, color end) {
 void createBzzt() {
   color s = chooseColor();
   color e = chooseColor();
+  /*
   while(s == e) {
     e = chooseColor();
   }
+*/
   createBzzt(s, e);
 }
 
