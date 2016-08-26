@@ -1,6 +1,9 @@
 Bzzt b;
 int xFunc, yFunc;
 int clean, cleanCounter;
+color[] colors;
+color lightColor, middleColor, darkColor, contrastColor;
+int numDrawn;
 
 void setup() {
   background(0, 179, 254);
@@ -11,22 +14,54 @@ void setup() {
   xFunc = 1;
   yFunc = 2;
 
-  b = new Bzzt(xFunc, yFunc);
+  lightColor = color(75, 255, 254);
+  middleColor = color(0, 179, 254);
+  darkColor = color(56, 0, 82);
+  contrastColor = color(255, 87, 80);
+  colors = new color[]{lightColor, middleColor, darkColor, contrastColor};
+
+  b = new Bzzt(xFunc, yFunc, middleColor, darkColor);
 
   clean = 255;
   cleanCounter = 0;
+  numDrawn = 0;
 }
 
 void draw() {
+  drawSingle();
+}
+
+void clean() {
+  // Using rect instead of background to fade out
+  fill(0, 179, 254, cleanCounter);
+  rect(0, 0, width, height);
+  cleanCounter++;
+}
+
+color chooseColor() {
+  return colors[int(random(colors.length))];
+}
+
+void createBzzt(color start, color end) {
+  b = new Bzzt(xFunc, yFunc, start, end);
+  cleanCounter = 0;
+}
+
+void createBzzt() {
+  color s = chooseColor();
+  color e = chooseColor();
+  while(s == e) {
+    e = chooseColor();
+  }
+  createBzzt(s, e);
+}
+
+void drawSingle() {
   if (b.isStopped()) {
     if (cleanCounter < clean) {
-      // Using rect instead of background to fade out
-      fill(0, 179, 254, cleanCounter);
-      rect(0, 0, width, height);
-      cleanCounter++;
+      clean();
     } else {
-      b = new Bzzt(xFunc, yFunc);
-      cleanCounter = 0;
+      createBzzt();
     }
   } else {
     b.make();
@@ -48,7 +83,7 @@ class Bzzt {
 
   boolean stopped;
 
-  Bzzt(int xFunc, int yFunc) {
+  Bzzt(int xFunc, int yFunc, color startColor, color endColor) {
     this.xFunc = xFunc;
     this.yFunc = yFunc;
 
@@ -72,8 +107,8 @@ class Bzzt {
       maxBzztSize -= maxEllipseSize/2;
     }
 
-    startColor = color(75, 255, 254);
-    endColor = color(0, 179, 254);
+    this.startColor = startColor;
+    this.endColor = endColor;
     colorSteps = int(maxBzztSize/random(1, 1.5));
     rColorDiff = red(startColor) - red(endColor);
     gColorDiff = green(startColor) - green(endColor);
@@ -170,3 +205,4 @@ class Bzzt {
     }
   }
 }
+
