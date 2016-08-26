@@ -42,20 +42,14 @@ color chooseColor() {
   return colors[int(random(colors.length))];
 }
 
-void createBzzt(color start, color end) {
-  b = new Bzzt(xFunc, yFunc, start, end);
-  cleanCounter = 0;
-}
-
 void createBzzt() {
   color s = chooseColor();
   color e = chooseColor();
-  /*
   while(s == e) {
     e = chooseColor();
   }
-*/
-  createBzzt(s, e);
+  b = new Bzzt(xFunc, yFunc, start, end);
+  cleanCounter = 0;
 }
 
 void drawSingle() {
