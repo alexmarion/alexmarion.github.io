@@ -1,13 +1,17 @@
 Bzzt b;
+int xFunc, yFunc;
 int clean, cleanCounter;
 
 void setup() {
-  size( $(window).width()/2, $(window).height()/2 );
-  //size(640, 320);
   background(0, 179, 254);
+  size( $(window).width()/2, $(window).height()/2 );
   noStroke();
+  smooth();
 
-  b = new Bzzt();
+  xFunc = 1;
+  yFunc = 2;
+
+  b = new Bzzt(xFunc, yFunc);
 
   clean = 255;
   cleanCounter = 0;
@@ -21,7 +25,7 @@ void draw() {
       rect(0, 0, width, height);
       cleanCounter++;
     } else {
-      b = new Bzzt();
+      b = new Bzzt(xFunc, yFunc);
       cleanCounter = 0;
     }
   } else {
@@ -30,8 +34,10 @@ void draw() {
 }
 
 class Bzzt {
+  int xFunc, yFunc;
 
-  float theta, r, x, y, xLoc, yLoc, angle, rotRate, pos, dist, growth, growthRate, size, maxSize;
+  int numCircles;
+  float theta, r, x, y, xLoc, yLoc, angle, rotRate, pos, dist, growth, growthRate, size, maxEllipseSize, maxBzztSize;
   boolean out;
 
   color startColor, currentColor, endColor;
@@ -40,29 +46,35 @@ class Bzzt {
   int colorSign, colorSteps, colorCounter;
   boolean colorSwitch;
 
-  boolean stopped, made;
+  boolean stopped;
 
-  Bzzt() {
+  Bzzt(int xFunc, int yFunc) {
+    this.xFunc = xFunc;
+    this.yFunc = yFunc;
 
     theta = 0;
     r = 1;
     x = 0;
     y = 0;
+    
     xLoc = width/2;
     yLoc = height/2;
+
     angle = 0;
     rotRate = 0.01;
     out = true;
     growth = 0;
     growthRate = random(.1, .5);
     size = r;
-    maxSize = random(50, width/2 - 50);  // Subtracting 50 as max rad for testing
+    maxEllipseSize = height/2 * growthRate;
+    maxBzztSize = random(50, height/2);
+    if (maxBzztSize + maxEllipseSize/2 > height/2) {
+      maxBzztSize -= maxEllipseSize/2;
+    }
 
-    //startColor = color(255, 136, 0);
-    //startColor = color(random(255), random(255), random(255));
-    startColor = color(255, 30, 200);
+    startColor = color(75, 255, 254);
     endColor = color(0, 179, 254);
-    colorSteps = 100;
+    colorSteps = int(maxBzztSize/random(1, 1.5));
     rColorDiff = red(startColor) - red(endColor);
     gColorDiff = green(startColor) - green(endColor);
     bColorDiff = blue(startColor) - blue(endColor);
@@ -75,7 +87,6 @@ class Bzzt {
     colorSwitch = true;
 
     stopped = false;
-    made = false;
   }
 
   boolean isStopped() {
@@ -112,10 +123,12 @@ class Bzzt {
     angle += rotRate;
 
     /* Travel direction */
-    if (dist >= maxSize) {
+    pushMatrix();
+    if (dist >= (height - yLoc) - size || dist <= -(height - yLoc) + size) {
       out = false;
     }
-
+    popMatrix();
+     
     /* Stopping condition */
     if (dist <= 0 && out == false) {
       stopped = true;
@@ -136,10 +149,24 @@ class Bzzt {
     for (int i = 1; i < 361; i += 30) { 
       // Conversion from polar to cartisian coordinates
       theta = radians(i);
-      x = dist * cos(theta);
-      y = dist * sin(theta);
-
+      
+      x = getPoint(xFunc);
+      y = getPoint(yFunc);
+      
       ellipse(x, y, size, size);
+    }
+  }
+
+  float getPoint(int n) {
+    switch(n) {
+    case 1:
+      return dist * sin(theta);
+    case 2:
+      return dist * cos(theta);
+    case 3:
+      return dist * tan(theta);
+    default:
+      return dist * sin(theta);
     }
   }
 }
